@@ -25,6 +25,13 @@ containsAsSourceRoom r (Alley sr _ _ _) = r == sr
 containsAsTargetRoom :: Room -> Alley -> Bool
 containsAsTargetRoom r (Alley _ _ tr _) = r == tr
 
+-- This function checks if the alley can be created 
+-- so all doors needed are existing.
+createAlley :: Room -> Maybe Door -> Room -> Maybe Door -> Maybe Alley
+createAlley r1 (Just d1) r2 (Just d2) = Just (Alley r1 (Just d1) r2 (Just d2))
+createAlley r1 Nothing _ _ = Nothing
+createAlley _ _ r2 Nothing = Nothing
+
 
 -- This function takes two rooms and a list 
 -- of existing alleys and checks if the rooms
