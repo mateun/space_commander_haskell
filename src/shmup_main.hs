@@ -33,35 +33,32 @@ moveCmdForEvent (KeyboardEvent keyboardEvent) = case keyboardEventKeyMotion keyb
                                                    Pressed -> MoveLeft
 moveCmdForEvent _ = MoveNone
 
-lp :: Scancode -> IO Bool
-lp s = do
-	f <- getKeyboardState
-	let b = f ScancodeA
-	return True
-
+-- We collect all movement commands of the current frame
+-- into a list for further processing.
 moveCmdForFrame :: IO [MoveCommand]
 moveCmdForFrame = do
   ks <- getKeyboardState
   let cs = []
   let l = ks ScancodeA
-  let cs' = if l == True then
-                MoveLeft : cs
-		    else MoveNone : cs
+  let cs' = case l of 
+              True -> MoveLeft : cs;
+              False -> MoveNone : cs
   let r = ks ScancodeD
   let cs'' = case r of 
                True -> (MoveRight : cs');
-			   False -> MoveNone : cs'
+               False -> MoveNone : cs'
   let u = ks ScancodeW
   let cs''' = case u of { True -> MoveUp : cs''; False -> MoveNone : cs''}
   let d = ks ScancodeS
   let cs'''' = case d of 
                 True -> MoveDown : cs''';
-			     False -> MoveNone : cs'''
+                False -> MoveNone : cs'''
   return cs''''
   
 moveSpeed :: Float
 moveSpeed = 2.0
 
+-- Transforms a movement command to a V2.
 transformCmdToVec :: MoveCommand -> V2 Float
 transformCmdToVec MoveLeft = V2 (-moveSpeed) 0
 transformCmdToVec MoveRight = V2 (moveSpeed) 0
@@ -70,17 +67,13 @@ transformCmdToVec MoveDown = V2 0 moveSpeed
 transformCmdToVec MoveNone = V2 0 0
 
 
-vectorForMoveCmd :: MoveCommand -> V2 CInt
-vectorForMoveCmd mc = (V2 (-1) 0)
-
-
 getPlayerPos :: V2 Float -> V2 Float
 getPlayerPos currPos@(V2 x y) = (V2 (x + 3.3) y)
 
 getWaitPeriod :: CInt -> Word32
 getWaitPeriod frameTime
-	| frameTime >= 0 = 16 - fromIntegral(frameTime)
-	| otherwise = 0
+    | frameTime >= 0 = 16 - fromIntegral(frameTime)
+    | otherwise = 0
 
 main :: IO ()
 main = do
