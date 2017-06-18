@@ -92,8 +92,6 @@ appLoop renderer playerTex pos = do
       qPressed = any eventIsQPress events
       -}
 
-  let newPos@(V2 xn yn) = getPlayerPos pos
-  let newPosInt = (V2 (round xn) (round yn))
   moveCmds <- moveCmdForFrame
   let vecs = Prelude.map transformCmdToVec moveCmds
   let vecCondensed@(V2 xc yc) = Prelude.foldl (+) pos vecs
@@ -104,9 +102,8 @@ appLoop renderer playerTex pos = do
                                  (Just (Rectangle (P (vecCondensedI)) (V2 64 64)))
   present renderer
   end <- getTime Monotonic
-  
-  -- not necessary due to VSYNC
   -- let diff = (((nsec end) - (nsec start)) `div` 1000 `div` 1000)
+  -- not necessary due to VSYNC
   --SDL.delay (getWaitPeriod (fromIntegral diff))
   unless quit (appLoop renderer playerTex vecCondensed)
   
