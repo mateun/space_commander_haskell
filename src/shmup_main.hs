@@ -1,5 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
+module ShmupMain where
+
 import SDL
 import SDL.Raw.Basic as SRB
 import SDL.Vect
@@ -33,6 +35,8 @@ moveCmdForEvent (KeyboardEvent keyboardEvent) = case keyboardEventKeyMotion keyb
                                                    Pressed -> MoveLeft
 moveCmdForEvent _ = MoveNone
 
+
+
 -- We collect all movement commands of the current frame
 -- into a list for further processing.
 moveCmdForFrame :: IO [MoveCommand]
@@ -56,7 +60,7 @@ moveCmdForFrame = do
   return cs''''
   
 moveSpeed :: Float
-moveSpeed = 2.0
+moveSpeed = 4.0
 
 -- Transforms a movement command to a V2.
 transformCmdToVec :: MoveCommand -> V2 Float
@@ -73,11 +77,11 @@ main = do
   renderer <- createRenderer window (-1) defaultRenderer { rendererType = AcceleratedVSyncRenderer }
   wd <- getCurrentDirectory
   playerTexture <- loadTexture renderer (wd ++ "/player_sprite_sheet.bmp")
-  appLoop renderer playerTexture (V2 10 50)
+  appLoop renderer playerTexture (V2 10 50) 1
   SDL.quit
 
-appLoop :: Renderer -> Texture -> V2 Float -> IO()
-appLoop renderer playerTex pos = do
+appLoop :: Renderer -> Texture -> V2 Float -> CFloat -> IO()
+appLoop renderer playerTex pos animFrame = do
   start <- getTime Monotonic
   events <- pollEvents
   let quit = elem SDL.QuitEvent $ Prelude.map eventPayload events
@@ -96,16 +100,17 @@ appLoop renderer playerTex pos = do
   let vecs = Prelude.map transformCmdToVec moveCmds
   let vecCondensed@(V2 xc yc) = Prelude.foldl (+) pos vecs
   let vecCondensedI = V2 (round xc) (round yc)
+  let animFrame' = animFrame
   rendererDrawColor renderer $= V4 10 10 25 255
   clear renderer
-  renderTexture renderer playerTex (Just (Rectangle (P (V2 10 10)) (V2 64 64)))
+  renderTexture renderer playerTex (Just (Rectangle (P (V2 0 5)) (V2 64 64)))
                                  (Just (Rectangle (P (vecCondensedI)) (V2 64 64)))
   present renderer
   end <- getTime Monotonic
   -- let diff = (((nsec end) - (nsec start)) `div` 1000 `div` 1000)
   -- not necessary due to VSYNC
   --SDL.delay (getWaitPeriod (fromIntegral diff))
-  unless quit (appLoop renderer playerTex vecCondensed)
+  unless quit (appLoop renderer playerTex vecCondensed animFrame')
   
   
   
