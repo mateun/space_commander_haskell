@@ -2,17 +2,24 @@ module World where
 
 import Data.List
 
+data Direction = North | South | East | West | None deriving (Eq, Show)
 data Alley = Alley {
    srcRoom :: Room,
    srcDoor :: Maybe Door, 
    targetRoom :: Room, 
    targetDoor :: Maybe Door
-} deriving (Show, Eq)
+   
+} deriving (Eq)
+
+instance Show Alley where
+  show (Alley sr (Just sd) tr (Just td)) = (name sr) ++ "->" ++ (name tr)
+  show _ = "no alley here"
+
 data Door = Door deriving (Show, Eq)
 data Room = Room {
     name :: String, 
-    eastDoor :: (Maybe Door),
-    westDoor :: (Maybe Door)
+    westDoor :: (Maybe Door),
+    eastDoor :: (Maybe Door)
 } deriving (Show, Eq)
 
 
@@ -24,6 +31,9 @@ containsAsSourceRoom r (Alley sr _ _ _) = r == sr
 
 containsAsTargetRoom :: Room -> Alley -> Bool
 containsAsTargetRoom r (Alley _ _ tr _) = r == tr
+
+containsAsSourceRoomWithDoor :: Room -> Door -> Alley -> Bool
+containsAsSourceRoomWithDoor r d(Alley sr (Just sd) _ _) = r == sr && d == sd
 
 -- This function checks if the alley can be created 
 -- so all doors needed are existing.
@@ -41,9 +51,18 @@ isConnectedSourceToTarget :: Room -> Room -> [Alley] -> Maybe Alley
 isConnectedSourceToTarget sr tr as = checkStuff (intersect ((filter (containsAsSourceRoom sr)) as) ((filter (containsAsTargetRoom tr)) as)) 
      where checkStuff [] = Nothing
            checkStuff (a:as) = Just a
-		   
+
 isConnectedAnyDirection :: Room -> Room -> [Alley] -> Maybe Alley
 isConnectedAnyDirection sr tr as = checkStuff (isConnectedSourceToTarget sr tr as) (isConnectedSourceToTarget tr sr as)
      where checkStuff (Just a) Nothing = Just a;
-	       checkStuff Nothing (Just b) = Just b
+           checkStuff Nothing (Just b) = Just b
            checkStuff _ _ = Nothing
+
+-- Checks if the room and the given door have an alley 
+-- that leads to another room.		   
+hasAlley :: Room -> Maybe Door -> [Alley] -> Maybe Alley
+hasAlley r Nothing _ = Nothing
+hasAlley r (Just d) as = checkStuff (filter (containsAsSourceRoomWithDoor r d) as)
+  where checkStuff [] = Nothing;
+        checkStuff (a : _) = Just a
+
