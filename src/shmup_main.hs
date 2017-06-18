@@ -72,7 +72,7 @@ main = do
   window <- createWindow "Shmup" defaultWindow
   renderer <- createRenderer window (-1) defaultRenderer { rendererType = AcceleratedVSyncRenderer }
   wd <- getCurrentDirectory
-  playerTexture <- loadTexture renderer (wd ++ "/player.bmp")
+  playerTexture <- loadTexture renderer (wd ++ "/player_sprite_sheet.bmp")
   appLoop renderer playerTexture (V2 10 50)
   SDL.quit
 
@@ -98,7 +98,7 @@ appLoop renderer playerTex pos = do
   let vecCondensedI = V2 (round xc) (round yc)
   rendererDrawColor renderer $= V4 10 10 25 255
   clear renderer
-  renderTexture renderer playerTex Nothing
+  renderTexture renderer playerTex (Just (Rectangle (P (V2 10 10)) (V2 64 64)))
                                  (Just (Rectangle (P (vecCondensedI)) (V2 64 64)))
   present renderer
   end <- getTime Monotonic
