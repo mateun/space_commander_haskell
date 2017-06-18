@@ -66,15 +66,6 @@ transformCmdToVec MoveUp = V2 0 (-moveSpeed)
 transformCmdToVec MoveDown = V2 0 moveSpeed
 transformCmdToVec MoveNone = V2 0 0
 
-
-getPlayerPos :: V2 Float -> V2 Float
-getPlayerPos currPos@(V2 x y) = (V2 (x + 3.3) y)
-
-getWaitPeriod :: CInt -> Word32
-getWaitPeriod frameTime
-    | frameTime >= 0 = 16 - fromIntegral(frameTime)
-    | otherwise = 0
-
 main :: IO ()
 main = do
   initializeAll
