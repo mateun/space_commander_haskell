@@ -15,5 +15,5 @@ loadTexture r filePath = do
 
 renderTexture :: SDL.Renderer -> Texture -> Maybe (Rectangle CInt) -> Maybe (Rectangle CInt) -> IO ()
 renderTexture r t sr dr = do
-    let dstRect = Rectangle (P (V2 10 10)) (V2 64 64)
+    --let dstRect = Rectangle (P (V2 10 10)) (V2 64 64)
     SDL.copy r t sr dr
