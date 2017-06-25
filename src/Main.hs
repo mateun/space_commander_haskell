@@ -86,7 +86,7 @@ appLoop renderer playerTex pos animFrame = do
   events <- pollEvents
   let quit = elem SDL.QuitEvent $ Prelude.map eventPayload events
   let moveCmds = Prelude.map moveCmdForEvent $ Prelude.map eventPayload events
-  let moveCmds' = [MoveRight, MoveUp]
+  --let moveCmds' = [MoveRight, MoveUp]
   {-let eventIsQPress event = 
        case eventPayload event of 
           KeyboardEvent keyboardEvent ->
