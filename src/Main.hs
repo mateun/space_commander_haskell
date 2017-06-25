@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module ShmupMain where
+module Main where
 
 import SDL
 import SDL.Raw.Basic as SRB
@@ -76,7 +76,7 @@ main = do
   window <- createWindow "Shmup" defaultWindow
   renderer <- createRenderer window (-1) defaultRenderer { rendererType = AcceleratedVSyncRenderer }
   wd <- getCurrentDirectory
-  playerTexture <- loadTexture renderer (wd ++ "/player_sprite_sheet.bmp")
+  playerTexture <- loadTexture renderer (wd ++ "/textures/player_sprite_sheet.bmp")
   appLoop renderer playerTexture (V2 10 50) 1
   SDL.quit
 
