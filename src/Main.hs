@@ -85,22 +85,11 @@ appLoop renderer playerTex pos animFrame = do
   start <- getTime Monotonic
   events <- pollEvents
   let quit = elem SDL.QuitEvent $ Prelude.map eventPayload events
-  let moveCmds = Prelude.map moveCmdForEvent $ Prelude.map eventPayload events
-  --let moveCmds' = [MoveRight, MoveUp]
-  {-let eventIsQPress event = 
-       case eventPayload event of 
-          KeyboardEvent keyboardEvent ->
-                 keyboardEventKeyMotion keyboardEvent == Pressed && 
-                   keysymKeycode (keyboardEventKeysym keyboardEvent) == KeycodeQ
-          _ -> False
-      qPressed = any eventIsQPress events
-      -}
 
-  moveCmds <- moveCmdForFrame
   let vecs = Prelude.map transformCmdToVec moveCmds
   let vecCondensed@(V2 xc yc) = Prelude.foldl (+) pos vecs
   let vecCondensedI = V2 (round xc) (round yc)
-  let animFrame' = animFrame
+  --let animFrame' = animFrame
   rendererDrawColor renderer $= V4 10 10 25 255
   clear renderer
   renderTexture renderer playerTex (Just (Rectangle (P (V2 0 5)) (V2 64 64)))
